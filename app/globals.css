@@ -1,0 +1,188 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/**
+ * Two themes, one set of tokens.
+ *
+ * Nothing outside this block should name a light or a dark colour: every
+ * component reads `bg-card`, `text-muted-foreground`, `border-border` and so
+ * on, and the theme is the only thing that decides what those are. `.dark` is
+ * the class on `<html>`, so the switch is one class and no component knows it
+ * happened.
+ *
+ * The light values are not eyeballed. Each pair was measured against the
+ * shipped dark theme's own ratios so the two themes are the same quality
+ * rather than one being a guess:
+ *
+ *                        dark      light
+ *   foreground/card     14.29:1   16.43:1
+ *   muted-fg/card        5.39:1    6.81:1
+ *   primary/card         9.48:1    5.42:1
+ *   primary-fg/primary   9.81:1    5.28:1
+ *   destructive/card     4.55:1    6.12:1
+ *   border/card          1.33:1    1.41:1   (a divider, not text)
+ *
+ * The teal primary had to go from L=0.78 to L=0.50: at the dark theme's
+ * lightness it measures 3.4:1 on white, which fails AA both as link text and
+ * behind the white label of a filled button.
+ */
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.004 250);
+  --foreground: oklch(0.24 0.018 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.018 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.018 250);
+  --primary: oklch(0.50 0.115 195);
+  --primary-foreground: oklch(0.99 0.005 195);
+  --secondary: oklch(0.955 0.008 250);
+  --secondary-foreground: oklch(0.24 0.018 250);
+  --muted: oklch(0.955 0.008 250);
+  --muted-foreground: oklch(0.47 0.022 250);
+  --accent: oklch(0.93 0.012 250);
+  --accent-foreground: oklch(0.24 0.018 250);
+  --destructive: oklch(0.52 0.20 25);
+  --border: oklch(0.885 0.012 250);
+  --input: oklch(0.885 0.012 250);
+  --ring: oklch(0.50 0.115 195);
+
+  /* Scrollbars: a touch darker than the border here, for the same reason they
+     are a touch lighter in the dark theme — readable as interactive without
+     competing with the content. */
+  --scrollbar-thumb: oklch(0.80 0.014 250);
+  --scrollbar-thumb-hover: oklch(0.66 0.020 250);
+}
+
+.dark {
+  --background: oklch(0.16 0.012 250);
+  --foreground: oklch(0.92 0.012 250);
+  --card: oklch(0.20 0.014 250);
+  --card-foreground: oklch(0.92 0.012 250);
+  --popover: oklch(0.20 0.014 250);
+  --popover-foreground: oklch(0.92 0.012 250);
+  --primary: oklch(0.78 0.11 184);
+  --primary-foreground: oklch(0.18 0.02 200);
+  --secondary: oklch(0.25 0.014 250);
+  --secondary-foreground: oklch(0.92 0.012 250);
+  --muted: oklch(0.25 0.014 250);
+  --muted-foreground: oklch(0.64 0.02 250);
+  --accent: oklch(0.28 0.02 250);
+  --accent-foreground: oklch(0.92 0.012 250);
+  --destructive: oklch(0.62 0.18 22);
+  --border: oklch(0.30 0.016 250);
+  --input: oklch(0.30 0.016 250);
+  --ring: oklch(0.78 0.11 184);
+
+  --scrollbar-thumb: oklch(0.38 0.018 250);
+  --scrollbar-thumb-hover: oklch(0.50 0.022 250);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  /* Tells the browser which way to draw *native* widgets: scrollbars, the
+     `<select>` dropdown lists, autofill, focus rings, date pickers. This is
+     load-bearing, not cosmetic — the status pickers are native selects, and
+     without this a dark page gets white popups over it. It has to follow the
+     theme for the same reason. */
+  :root { color-scheme: light; }
+  .dark { color-scheme: dark; }
+
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+
+  /* Tailwind v4's Preflight sets `cursor: default` on buttons, which is a
+     deliberate break from v3 — the argument being that the spec reserves the
+     hand for links. In an app that is almost entirely buttons, chips and
+     toggles, the effect is that nothing looks clickable. Put it back.
+     Listed by element and by ARIA role, so Radix's rendered divs
+     (tabs, menu items, checkboxes, the sheet's close button) are covered too. */
+  button,
+  summary,
+  select,
+  label:has(> input[type='checkbox']),
+  label:has(> input[type='radio']),
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='file'],
+  input[type='submit'],
+  input[type='reset'],
+  input[type='button'],
+  input[type='color'],
+  input[type='range'],
+  a[href],
+  [role='button'],
+  [role='tab'],
+  [role='option'],
+  [role='menuitem'],
+  [role='menuitemcheckbox'],
+  [role='menuitemradio'],
+  [role='checkbox'],
+  [role='radio'],
+  [role='switch'],
+  [role='combobox'] {
+    cursor: pointer;
+  }
+
+  /* Text-editable fields keep the I-beam: `cursor-pointer` on something you can
+     type into says the wrong thing. Date and time inputs are in that group —
+     they take typed input as well as opening a picker. */
+
+  /* Nothing unavailable pretends to be clickable. `disabled:pointer-events-none`
+     on the button variants already suppresses hover, but a plain `disabled`
+     button without that class would otherwise still show the hand. */
+  :disabled,
+  [aria-disabled='true'],
+  [data-disabled] {
+    cursor: not-allowed;
+  }
+
+  /* Utilities outrank the base layer in Tailwind v4, so an explicit
+     `cursor-col-resize` on the resize handles still wins over all of this. */
+
+  /* Firefox and the CSS standard. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  /* WebKit/Blink. The transparent border plus background-clip gives the thumb
+     breathing room from the track edge without needing a wider gutter. */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border: 2px solid transparent;
+    background-clip: content-box;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
+  /* Where the two bars meet, on a table that scrolls both ways. */
+  ::-webkit-scrollbar-corner { background: transparent; }
+}

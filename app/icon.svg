@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Redrawn by hand from the render's silhouette rather than traced from it.
+       A trace gives a 200-node path that turns to mush at 16px, and the
+       render's swivel eye is sub-pixel there regardless — so this drops to two
+       forms, a cord loop and a hook, which is the most that survives a 16px
+       tab. The loop's sides are deliberately convex: straight converging legs
+       read as a funnel at this size, not as cord. -->
+  <style>
+    /* The presentation attribute below is the fallback — it wins wherever a
+       favicon context ignores this stylesheet, so the mark is never unstyled.
+       The mid teal is a compromise that holds on both a white and a black tab
+       bar; the app's lighter teal only survives on dark. */
+    @media (prefers-color-scheme: dark) { .mark { stroke: #4FD4CB } }
+  </style>
+  <g class="mark" stroke="#14A8A2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M16 17C13 15 5.5 13.5 5.5 9.3C5.5 4.5 10.5 2.5 16 2.5C21.5 2.5 26.5 4.5 26.5 9.3C26.5 13.5 19 15 16 17Z"/>
+    <!-- 270° of arc, leaving the whole upper-right quadrant open. A tip curl
+         looks better large but closes the mouth to nothing at 16px. -->
+    <path d="M16 17L16 17.8A5.5 5.5 0 1 0 21.5 23.3"/>
+  </g>
+</svg>
